@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
-// to do: work on enemy movements (as of June 25, 2026 9:34 AM)
 // to do: incorporate sound effects and images (as of June 26, 2026 10:27 AM)
 
 public class gamePanel extends JPanel implements KeyListener, ActionListener {
@@ -55,6 +54,12 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
         this.requestFocusInWindow();
         Timer timer = new Timer(10, this);
         timer.start();
+    }
+
+    public void moveEnemies() {
+        for (Enemy currentEnemy : enemyArrayList) {
+            currentEnemy.move();
+        }
     }
 
     @Override
@@ -122,7 +127,7 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
                 g.fillRect((int) currentEnemyX, (int) currentEnemyY, enemySize, enemySize);
                 g.setColor(Color.black);
                 g.drawRect((int) currentEnemyX, (int) currentEnemyY, enemySize, enemySize);
-                currentEnemy.move();
+                //currentEnemy.move();
             }
         }
 
@@ -159,6 +164,7 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         projectileCollisionDetected();
+        moveEnemies();
         if (movingLeft) {
             if (NotOutOfBounds()) {
                 this.playerX = this.playerX - position;

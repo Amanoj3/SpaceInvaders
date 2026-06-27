@@ -57,7 +57,7 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
     }
 
     public void moveEnemies() {
-        for (Enemy currentEnemy : enemyArrayList) {
+        for (Enemy currentEnemy : enemyArrayList) { //move all enemies
             currentEnemy.move();
         }
     }

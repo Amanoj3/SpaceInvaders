@@ -57,7 +57,6 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
         timer.start();
     }
 
-
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -117,12 +116,13 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
         for (Enemy currentEnemy : enemyArrayList) {
             if (!currentEnemy.isDead()) {
                 g.setColor(Color.GREEN);
-                int currentEnemyX = currentEnemy.getEnemyX();
-                int currentEnemyY = currentEnemy.getEnemyY();
+                double currentEnemyX = currentEnemy.getEnemyX();
+                double currentEnemyY = currentEnemy.getEnemyY();
                 int enemySize = currentEnemy.getEnemySize();
-                g.fillRect(currentEnemyX, currentEnemyY, enemySize, enemySize);
+                g.fillRect((int) currentEnemyX, (int) currentEnemyY, enemySize, enemySize);
                 g.setColor(Color.black);
-                g.drawRect(currentEnemyX, currentEnemyY, enemySize, enemySize);
+                g.drawRect((int) currentEnemyX, (int) currentEnemyY, enemySize, enemySize);
+                currentEnemy.move();
             }
         }
 
@@ -134,7 +134,7 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
 
     }
 
-    public boolean outOfBounds(){
+    public boolean NotOutOfBounds(){
         return (!movingLeft || (playerX > 0)) && (!movingRight || (playerX < RIGHT_BOUNDARY));
     }
 
@@ -160,12 +160,12 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
     public void actionPerformed(ActionEvent e) {
         projectileCollisionDetected();
         if (movingLeft) {
-            if (outOfBounds()) {
+            if (NotOutOfBounds()) {
                 this.playerX = this.playerX - position;
             }
         }
         if (movingRight) {
-            if (outOfBounds()) {
+            if (NotOutOfBounds()) {
                 this.playerX = this.playerX + position;
             }
         }

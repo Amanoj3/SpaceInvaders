@@ -1,10 +1,14 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 // to do: incorporate sound effects and images (as of June 26, 2026 10:27 AM)
 // to do: work on enemy projectile movements (as of June 27, 2026 11:28 AM)
@@ -42,6 +46,9 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
     private int projectileY;
     private final int projectileSize;
     private final ArrayList<Enemy> enemyArrayList;
+
+    private BufferedImage img;
+
     public gamePanel() {
         int enemyStartX = 100;
         enemyArrayList = new ArrayList<>();
@@ -50,7 +57,16 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
             enemyArrayList.add(newEnemy);
             enemyStartX = enemyStartX + 100;
         }
-        //firstEnemy = enemyArrayList.getFirst();
+        this.setPreferredSize(new Dimension(500,500));
+        String background_filepath = "/SpaceInvadersBackground.png";
+
+        try {
+            img = ImageIO.read(Objects.requireNonNull(getClass().getResource(background_filepath)));
+            System.out.println("IMAGE LOADED!!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         this.millisecondCounter = 0;
         this.movingLeft = false;
         this.movingRight = false;
@@ -67,6 +83,8 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
         this.requestFocusInWindow();
         Timer timer = new Timer(10, this);
         timer.start();
+        System.out.println("img width: " + img.getWidth());
+        System.out.println("img height: " + img.getHeight());
     }
 
     public void moveEnemies() {
@@ -114,6 +132,22 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        if (img != null) {
+            g.drawImage(img,0,0,500,500,this);
+        }
+        g.setColor(Color.RED);
+        g.drawRect(0,0,500,500);
+        /*if (backgroundLabel.getIcon() != null) {
+            Image img = ((ImageIcon) backgroundLabel.getIcon()).getImage();
+            g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
+            System.out.println("bg label not null!");
+        }
+        else {
+            this.setBackground(new Color(0x87CEEB));
+        }*/
+
+
         // Font setup
         g.setFont(new Font("Arial", Font.BOLD,14));
         g.setColor(Color.BLACK);
@@ -124,7 +158,7 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
         g.drawString(score, SCORE_X, SCORE_Y_AND_LIVES_Y);
         g.drawString(lives,LIVES_X,SCORE_Y_AND_LIVES_Y);
 
-        // Draw background
+        // Draw protagonist
         g.setColor(Color.WHITE);
         g.fillRect(playerX, playerY, PLAYER_SIZE, PLAYER_SIZE);
         g.setColor(Color.BLACK);

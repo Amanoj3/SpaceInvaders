@@ -10,4 +10,5 @@ void main() {
     myFrame.addKeyListener(myPanel);
     myFrame.add(myPanel);
     myFrame.setResizable(false);
+    myFrame.setVisible(true);
 }

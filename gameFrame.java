@@ -6,7 +6,7 @@ public class gameFrame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(windowWidth, windowHeight);
         this.setLocationRelativeTo(null);
-        this.setVisible(true);
+        //this.setVisible(true);
         this.requestFocusInWindow();
 
     }

@@ -5,7 +5,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Random;
 // to do: incorporate sound effects and images (as of June 26, 2026 10:27 AM)
+// to do: work on enemy projectile movements (as of June 27, 2026 11:28 AM)
 
 public class gamePanel extends JPanel implements KeyListener, ActionListener {
 
@@ -18,9 +20,11 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
     private static final int SCORE_Y_AND_LIVES_Y = 25; // The Y-coordinate for the "Score" and "Lives" strings
     private static final int LIVES_X = 430; // The X-coordinate for the "Lives" string
     private static final int SCORE_INCREMENT = 100;
-
+    private Enemy randomEnemy;
+    private int millisecondCounter;
 
     private boolean movingLeft;
+    private int enemyShotIndex;
     private boolean movingRight;
     private int playerX;
     private final int playerY;
@@ -40,6 +44,8 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
             enemyArrayList.add(newEnemy);
             enemyStartX = enemyStartX + 100;
         }
+        //firstEnemy = enemyArrayList.getFirst();
+        this.millisecondCounter = 0;
         this.movingLeft = false;
         this.movingRight = false;
         this.playerX = 225;
@@ -49,6 +55,7 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
         this.numberOfLives = 3;
         this.projectileMode = false;
         this.projectileSize = 5;
+        this.enemyShotIndex = -1; // no enemy has fired a shot yet
         this.setBackground(new Color(0x87CEEB));
         this.setFocusable(true);
         this.requestFocusInWindow();
@@ -137,6 +144,14 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
             g.fillRect(projectileX, projectileY, projectileSize,projectileSize);
         }
 
+        if (randomEnemy != null) { // prevents null pointer exceptions
+            if (randomEnemy.isEnemyProjectileOn() && !randomEnemy.isDead()) {
+                g.setColor(Color.RED);
+                int enemyProjectileX = (int) randomEnemy.getEnemyProjectileX();
+                int enemyProjectileY = (int) randomEnemy.getEnemyProjectileY();
+                g.fillRect(enemyProjectileX, enemyProjectileY, projectileSize, projectileSize);
+            }
+        }
     }
 
     public boolean NotOutOfBounds(){
@@ -159,12 +174,27 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
         }
     }
 
+    public int getRandomEnemyIndex() {
+        Random randomObject = new Random();
+        return randomObject.nextInt(enemyArrayList.size());
+    }
+
+
     @Override
 
-
     public void actionPerformed(ActionEvent e) {
+        this.millisecondCounter = this.millisecondCounter + 10;
         projectileCollisionDetected();
         moveEnemies();
+
+        if (millisecondCounter >= 3000) {
+            if (enemyShotIndex == -1) { // ensures only one enemy can fire a shot at a time
+                enemyShotIndex = getRandomEnemyIndex();
+                randomEnemy = enemyArrayList.get(enemyShotIndex);
+                randomEnemy.shoot();
+                millisecondCounter = 0;
+            }
+        }
         if (movingLeft) {
             if (NotOutOfBounds()) {
                 this.playerX = this.playerX - position;
@@ -181,6 +211,18 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
             if (projectileOutOfBounds()) {
                 this.resetProjectile();
                 System.out.println("here!");
+            }
+        }
+
+        if (randomEnemy != null) {
+            if (randomEnemy.isEnemyProjectileOn()) {
+                double currentEnemyProjectileY = randomEnemy.getEnemyProjectileY();
+                double newEnemyProjectileY = currentEnemyProjectileY + 2;
+                randomEnemy.setEnemyProjectileY(newEnemyProjectileY);
+                if (randomEnemy.enemyProjectileOutOfBounds()) {
+                    randomEnemy.enemyResetProjectile();
+                    enemyShotIndex = -1;
+                }
             }
         }
 

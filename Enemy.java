@@ -2,8 +2,10 @@ import java.awt.*;
 
 public class Enemy {
 
-    private static final double MOVE_FACTOR = 0.50;
+    private static final double MOVE_FACTOR = 0.30;
     private static final int RIGHT_BOUNDARY = 435;
+    private static final double ENEMY_PROJECTILE_OFFSET_X = 22.5;
+    private static final double ENEMY_PROJECTILE_OFFSET_Y = 5;
 
     private double enemyX;
     private double enemyY;
@@ -11,6 +13,9 @@ public class Enemy {
     private boolean isDead;
     private boolean enemyMovingLeft;
     private boolean enemyMovingRight;
+    private double enemyProjectileX;
+    private double enemyProjectileY;
+    private boolean enemyProjectileOn;
 
 
     public Enemy(int x, int y) {
@@ -20,6 +25,9 @@ public class Enemy {
         this.isDead = false;
         this.enemyMovingLeft = true;
         this.enemyMovingRight = false;
+        this.enemyProjectileX = this.enemyX + ENEMY_PROJECTILE_OFFSET_X;
+        this.enemyProjectileY = this.enemyY + ENEMY_PROJECTILE_OFFSET_Y; // it goes down
+        this.enemyProjectileOn = false;
     }
 
     public double getEnemyX(){
@@ -70,6 +78,30 @@ public class Enemy {
         }
     }
 
+    public boolean enemyProjectileOutOfBounds() {
+        return enemyProjectileY >= 505;
+    }
+
+    public boolean isEnemyProjectileOn() {
+        return this.enemyProjectileOn;
+    }
+
+    public void enemyResetProjectile() {
+        this.enemyProjectileOn = false;
+        this.enemyProjectileX = this.enemyX + ENEMY_PROJECTILE_OFFSET_X;
+        this.enemyProjectileY = this.enemyY + ENEMY_PROJECTILE_OFFSET_Y;
+    }
+
+    public void shoot() {
+
+        if (!this.enemyProjectileOn) {
+            this.enemyProjectileOn = true;
+            this.enemyProjectileX = this.enemyX + ENEMY_PROJECTILE_OFFSET_X;
+            this.enemyProjectileY = this.enemyY + ENEMY_PROJECTILE_OFFSET_Y;
+        }
+
+    }
+
     public void moveLeft() {
         this.enemyMovingLeft = true;
         this.enemyMovingRight = false;
@@ -80,6 +112,18 @@ public class Enemy {
         this.enemyMovingRight = true;
         this.enemyMovingLeft = false;
         this.enemyX = this.enemyX + MOVE_FACTOR;
+    }
+
+    public double getEnemyProjectileX() {
+        return this.enemyProjectileX;
+    }
+
+    public double getEnemyProjectileY() {
+        return this.enemyProjectileY;
+    }
+
+    public void setEnemyProjectileY(double enemyProjectileY) {
+        this.enemyProjectileY = enemyProjectileY;
     }
 
     public Rectangle getEnemyBounds() { // this helps us detect collisions since the intersect method requires a "Rectangle" object

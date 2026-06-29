@@ -6,6 +6,7 @@ public class Enemy {
     private static final int RIGHT_BOUNDARY = 435;
     private static final double ENEMY_PROJECTILE_OFFSET_X = 22.5;
     private static final double ENEMY_PROJECTILE_OFFSET_Y = 5;
+    private static final int BOTTOM_BOUNDARY = 505;
 
     private double enemyX;
     private double enemyY;
@@ -79,7 +80,7 @@ public class Enemy {
     }
 
     public boolean enemyProjectileOutOfBounds() {
-        return enemyProjectileY >= 505;
+        return enemyProjectileY >= BOTTOM_BOUNDARY;
     }
 
     public boolean isEnemyProjectileOn() {

@@ -20,6 +20,12 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
     private static final int SCORE_Y_AND_LIVES_Y = 25; // The Y-coordinate for the "Score" and "Lives" strings
     private static final int LIVES_X = 430; // The X-coordinate for the "Lives" string
     private static final int SCORE_INCREMENT = 100;
+    private static final int TOP_BOUNDARY = -5;
+    private static final int LEFT_BOUNDARY = 0;
+    private static final int TIMER_THRESHOLD = 3000; // enemies fire every 3 seconds (adjust if need be)
+    private static final int MILLISECOND_INCREMENT = 10;
+    private static final int PROJECTILE_SPEED = 2;
+
     private Enemy randomEnemy;
     private int millisecondCounter;
 
@@ -155,11 +161,11 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
     }
 
     public boolean NotOutOfBounds(){
-        return (!movingLeft || (playerX > 0)) && (!movingRight || (playerX < RIGHT_BOUNDARY));
+        return (!movingLeft || (playerX > LEFT_BOUNDARY)) && (!movingRight || (playerX < RIGHT_BOUNDARY));
     }
 
     public boolean projectileOutOfBounds() {
-        return projectileY <= -5;
+        return projectileY <= TOP_BOUNDARY;
     }
 
     public void projectileCollisionDetected() {
@@ -183,11 +189,11 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
     @Override
 
     public void actionPerformed(ActionEvent e) {
-        this.millisecondCounter = this.millisecondCounter + 10;
+        this.millisecondCounter = this.millisecondCounter + MILLISECOND_INCREMENT;
         projectileCollisionDetected();
         moveEnemies();
 
-        if (millisecondCounter >= 3000) {
+        if (millisecondCounter >= TIMER_THRESHOLD) {
             if (enemyShotIndex == -1) { // ensures only one enemy can fire a shot at a time
                 enemyShotIndex = getRandomEnemyIndex();
                 randomEnemy = enemyArrayList.get(enemyShotIndex);
@@ -207,7 +213,7 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
         }
 
         if (projectileMode) {
-            projectileY = projectileY - 2;
+            projectileY = projectileY - PROJECTILE_SPEED;
             if (projectileOutOfBounds()) {
                 this.resetProjectile();
                 System.out.println("here!");
@@ -217,7 +223,7 @@ public class gamePanel extends JPanel implements KeyListener, ActionListener {
         if (randomEnemy != null) {
             if (randomEnemy.isEnemyProjectileOn()) {
                 double currentEnemyProjectileY = randomEnemy.getEnemyProjectileY();
-                double newEnemyProjectileY = currentEnemyProjectileY + 2;
+                double newEnemyProjectileY = currentEnemyProjectileY + PROJECTILE_SPEED;
                 randomEnemy.setEnemyProjectileY(newEnemyProjectileY);
                 if (randomEnemy.enemyProjectileOutOfBounds()) {
                     randomEnemy.enemyResetProjectile();
